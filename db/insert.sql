@@ -356,3 +356,5 @@ INSERT INTO seat (level_id, number) VALUES (4, 97);
 INSERT INTO seat (level_id, number) VALUES (4, 98);
 INSERT INTO seat (level_id, number) VALUES (4, 99);
 INSERT INTO seat (level_id, number) VALUES (4, 100);
+
+INSERT INTO customer (email) VALUES ('foo@bar.com');
