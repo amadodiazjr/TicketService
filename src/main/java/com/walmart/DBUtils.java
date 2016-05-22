@@ -82,10 +82,10 @@ public class DBUtils {
 
 		final ConnectionFactory connectionFactory = new DriverManagerConnectionFactory(connectURI.toString(), properties);
         final PoolableConnectionFactory poolableConnectionFactory = new PoolableConnectionFactory(connectionFactory, null);
-        final ObjectPool<PoolableConnection> connectionPool = new GenericObjectPool<PoolableConnection>(poolableConnectionFactory);
+        final ObjectPool<PoolableConnection> connectionPool = new GenericObjectPool<>(poolableConnectionFactory);
         poolableConnectionFactory.setPool(connectionPool);
 
-        return new PoolingDataSource<PoolableConnection>(connectionPool);
+        return new PoolingDataSource<>(connectionPool);
 	}
 
 	private void loadProperties() throws Exception {

@@ -3,6 +3,10 @@ package integration;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -29,11 +33,29 @@ public class DAOTest {
 
 		// ~given
 		final Integer seatId = 1;
-		
+
 		// ~when
-		final Integer numSeats = dao.getSeatsOnHoldBySeatId(seatId);
+		final Integer numSeats = dao.getSeatsOnHoldBySeatId(Collections.singleton(seatId));
 		
 		// ~then
-		assertThat(numSeats, is(0));	
+		assertThat(numSeats, is(0));
+	}
+
+	@Test
+	public void getSeatsOnHoldBySeatIdShallReturnSeatsOnHoldByAllSeatIds() throws Exception {
+		final DAO dao = new DAO();
+
+		// ~given
+		final Set<Integer> seatIds = new HashSet<>();
+		seatIds.add(1);
+		seatIds.add(2);
+		seatIds.add(3);
+		seatIds.add(4);
+
+		// ~when
+		final Integer numSeats = dao.getSeatsOnHoldBySeatId(seatIds);
+		
+		// ~then
+		assertThat(numSeats, is(0));		
 	}
 }

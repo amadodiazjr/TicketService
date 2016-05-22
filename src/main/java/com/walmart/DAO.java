@@ -3,6 +3,7 @@ package com.walmart;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.Set;
 
 import org.apache.commons.lang.Validate;
 
@@ -35,20 +36,33 @@ public class DAO {
 		return emailAddress;
 	}
 
-	public Integer getSeatsOnHoldBySeatId(final Integer seatId) throws Exception {
-		Validate.notNull(seatId, "seatId is not provided.");
+	public Integer getSeatsOnHoldBySeatId(final Set<Integer> seatIds) throws Exception {
+		Validate.notNull(seatIds, "seatIds cannot be null.");
 		
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		Integer count = 0;
 
-		final StringBuffer sql = new StringBuffer("SELECT COUNT(*) as count FROM seats_on_hold WHERE seat_id = ?;");
+		final StringBuffer sql = new StringBuffer();
+		sql.append("SELECT COUNT(*) as count ");
+		sql.append("FROM seats_on_hold ");
+		sql.append("WHERE seat_id IN (");
+		for (int i=0; i< seatIds.size(); i++) {
+			if (i>0) { sql.append(", "); }
+			sql.append("?");
+		}
+		sql.append(")");
+
 		try {
             conn = DBUtils.getConnection();
 			pstmt = conn.prepareStatement(sql.toString(), ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-			pstmt.setInt(1, seatId);
-			
+			int i=1;
+			for (final Integer seatId : seatIds) {
+				pstmt.setInt(i, seatId);
+				i++;
+			}
+
 			rs = pstmt.executeQuery();
 			if (rs.next()) {
 				count = Integer.parseInt(rs.getString("count"));
