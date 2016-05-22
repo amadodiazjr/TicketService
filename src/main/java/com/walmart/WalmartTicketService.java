@@ -3,6 +3,7 @@ package com.walmart;
 import java.util.Optional;
 
 import org.apache.commons.lang3.Validate;
+import org.apache.commons.validator.routines.EmailValidator;
 
 public class WalmartTicketService implements TicketService {
 
@@ -20,8 +21,9 @@ public class WalmartTicketService implements TicketService {
 	public String reserveSeats(int seatHoldId, String customerEmail) {
 		Validate.isTrue(seatHoldId > 0, "seatHoldId cannot be a negative number.");
 		Validate.notBlank(customerEmail, "customerEmail is not provided.");
-		
-		return null;
+		Validate.isTrue(EmailValidator.getInstance().isValid(customerEmail), customerEmail + " is not valid.");
+
+		return ConfirmationNumberGenerator.getInstance().generate().toString();
 	}
 
 }

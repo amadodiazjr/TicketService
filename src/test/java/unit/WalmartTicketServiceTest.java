@@ -52,6 +52,34 @@ public class WalmartTicketServiceTest {
 		// ~then
 		// exception is thrown
 	}
-	
 
+	@Test(expected = Exception.class)
+	public void reserveSeatsShallThrowAnExceptionAnErrorWhenCustomerEmailIsNotValid() {
+		final TicketService service = new WalmartTicketService();
+		final int seatHoldId = 1;
+
+		// ~given
+		final String customerEmail = "foobar";
+
+		// ~when
+		service.reserveSeats(seatHoldId, customerEmail);
+		
+		// ~then
+		// exception is thrown
+	}
+
+	@Test
+	public void reserveSeatsShallReturnAStringWhenAllRequirementsAreMet() {
+		final TicketService service = new WalmartTicketService();
+
+		// ~given
+		final int seatHoldId = 1;
+		final String customerEmail = "foo@bar.com";
+
+		// ~when
+		final String confirmationNumber = service.reserveSeats(seatHoldId, customerEmail);
+		
+		// ~then
+		assertThat(confirmationNumber, is(notNullValue()));
+	}
 }
