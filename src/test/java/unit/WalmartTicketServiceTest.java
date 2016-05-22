@@ -1,4 +1,4 @@
-package com.walmart;
+package unit;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
@@ -6,10 +6,13 @@ import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
+import com.walmart.TicketService;
+import com.walmart.WalmartTicketService;
+
 public class WalmartTicketServiceTest {
 
 	@Test
-	public void canCreateATicketServiceObject() {
+	public void constructorShallCreateATicketServiceObject() {
 		// ~given
 		TicketService service = null;
 		
@@ -21,7 +24,7 @@ public class WalmartTicketServiceTest {
 	}
 
 	@Test(expected = Exception.class)
-	public void reserveSeatsShallReturnAnErrorWhenSeatHoldIdIsANegativeNumber() {
+	public void reserveSeatsShallThrowAnExceptionWhenSeatHoldIdIsANegativeNumber() {
 		final TicketService service = new WalmartTicketService();
 		final String customerEmail = "foo@bar.com";
 		
@@ -32,11 +35,11 @@ public class WalmartTicketServiceTest {
 		service.reserveSeats(seatHoldId, customerEmail);
 		
 		// ~then
-		// error is thrown
+		// exception is thrown
 	}
 
 	@Test(expected = Exception.class)
-	public void reserveSeatsShallReturnAnErrorWhenCustomerEmailIsNotProvided() {
+	public void reserveSeatsShallThrowAnExceptionAnErrorWhenCustomerEmailIsNotProvided() {
 		final TicketService service = new WalmartTicketService();
 		final int seatHoldId = 1;
 		
@@ -47,7 +50,8 @@ public class WalmartTicketServiceTest {
 		service.reserveSeats(seatHoldId, customerEmail);
 		
 		// ~then
-		// error is thrown
+		// exception is thrown
 	}
+	
 
 }
