@@ -69,4 +69,20 @@ public class ConfirmationNumberTest {
 		assertThat(confirmationNumber, is(notNullValue()));
 	}
 
+	@Test
+	public void toStringShallReturnAString() {		
+		final String prefix = "foo";
+		final Integer number = 1;
+		final String postfix = "bar";
+
+		// ~given
+		final ConfirmationNumber confirmationNumber = new ConfirmationNumber(prefix, number, postfix);
+		
+		// ~when
+		final String string = confirmationNumber.toString();
+		
+		// ~then
+		assertThat(string, is(notNullValue()));
+	}
+
 }

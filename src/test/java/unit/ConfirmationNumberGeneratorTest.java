@@ -17,7 +17,7 @@ public class ConfirmationNumberGeneratorTest {
 		ConfirmationNumber number = null;
 		
 		// ~when
-		number = ConfirmationNumberGenerator.generate();
+		number = ConfirmationNumberGenerator.getInstance().generate();
 		
 		// ~then
 		assertThat(number, is(notNullValue()));	

@@ -1,8 +1,15 @@
 package com.walmart;
 
 public class ConfirmationNumberGenerator {
+	private static ConfirmationNumberGenerator INSTANCE = new ConfirmationNumberGenerator();
 
-	public static ConfirmationNumber generate() {
+	private ConfirmationNumberGenerator() { }
+	
+	public static ConfirmationNumberGenerator getInstance() {
+		return INSTANCE;
+	}
+
+	public ConfirmationNumber generate() {
 		return new ConfirmationNumber("foo", 1, "bar");
 	}
 }
