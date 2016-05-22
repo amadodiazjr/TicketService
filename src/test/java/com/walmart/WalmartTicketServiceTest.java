@@ -6,15 +6,15 @@ import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
-public class TicketServiceTest {
+public class WalmartTicketServiceTest {
 
 	@Test
 	public void canCreateATicketServiceObject() {
 		// ~given
-		TicketService service = null;
+		WalmartTicketService service = null;
 		
 		// ~when
-		service = new TicketService();
+		service = new WalmartTicketService();
 
 		// ~then
 		assertThat(service, is(notNullValue()));
