@@ -5,7 +5,7 @@ import org.junit.Test;
 public class WalmartTicketServiceTest {
 	
 	@Test
-	public void numSeatsAvailableShallReturnTotalNumberOfAllVenuesWhenLevelIsNotProvided() {
+	public void numSeatsAvailableShallReturnTotalNumberOfAllLevelsWhenLevelIsNotProvided() {
 		
 	}
 	
