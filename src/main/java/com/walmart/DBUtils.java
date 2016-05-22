@@ -2,6 +2,8 @@ package com.walmart;
 
 import java.io.File;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.Properties;
 
 import javax.sql.DataSource;
@@ -43,6 +45,14 @@ public class DBUtils {
 		return conn;
 	}
 
+	public static void safeClose(final ResultSet resultSet) throws Exception {
+		if (null != resultSet) { resultSet.close(); }
+	}
+
+	public static void safeClose(final PreparedStatement pstmt) throws Exception {
+		if (null != pstmt) { pstmt.close(); }
+	}
+	
 	public static void safeClose(final Connection conn) throws Exception {
 		if (null != conn) { conn.close(); }
 	}
