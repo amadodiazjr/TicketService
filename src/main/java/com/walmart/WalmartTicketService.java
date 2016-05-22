@@ -2,6 +2,8 @@ package com.walmart;
 
 import java.util.Optional;
 
+import org.apache.commons.lang3.Validate;
+
 public class WalmartTicketService implements TicketService {
 
 	public int numSeatsAvailable(Optional<Integer> venueLevel) {
@@ -16,7 +18,9 @@ public class WalmartTicketService implements TicketService {
 	}
 
 	public String reserveSeats(int seatHoldId, String customerEmail) {
-		// TODO Auto-generated method stub
+		Validate.isTrue(seatHoldId > 0, "seatHoldId cannot be a negative number.");
+		Validate.notBlank(customerEmail, "customerEmail is not provided.");
+		
 		return null;
 	}
 
