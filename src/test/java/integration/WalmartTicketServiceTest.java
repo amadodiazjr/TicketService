@@ -38,4 +38,16 @@ public class WalmartTicketServiceTest {
 		assertThat(num, is(6250));
 	}
 	
+	@Test
+	public void numSeatsAvailableShallReturnTotalNumberOfSpecificLevelWhenLevelIsProvided() throws Exception {
+		// ~given
+		final TicketService service = new WalmartTicketService();		
+		
+		// ~when
+		final Integer num = service.numSeatsAvailable(Optional.of(1)); 
+
+		// ~then
+		assertThat(num, is(1250));
+	}
+
 }
