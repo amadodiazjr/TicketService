@@ -3,9 +3,9 @@ package integration;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -35,7 +35,7 @@ public class DAOTest {
 		final Integer seatId = 1;
 
 		// ~when
-		final Integer numSeats = dao.getSeatsOnHoldOrReserveBySeatId(Collections.singleton(seatId));
+		final Integer numSeats = dao.getSeatsOnHoldOrReserveBySeatId(Collections.singletonList(seatId));
 		
 		// ~then
 		assertThat(numSeats, is(0));
@@ -46,7 +46,7 @@ public class DAOTest {
 		final DAO dao = new DAO();
 
 		// ~given
-		final Set<Integer> seatIds = new HashSet<>();
+		final List<Integer> seatIds = new ArrayList<>();
 		seatIds.add(1);
 		seatIds.add(2);
 		seatIds.add(3);
@@ -64,7 +64,7 @@ public class DAOTest {
 		final DAO dao = new DAO();
 		
 		// ~given
-		Set<Integer> levelIds = new HashSet<>();
+		List<Integer> levelIds = new ArrayList<>();
 		
 		// ~when
 		levelIds = dao.getLevelIds();

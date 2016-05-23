@@ -3,8 +3,8 @@ package com.walmart;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang.Validate;
 
@@ -64,7 +64,7 @@ public class DAO {
 		return customerId;
 	}
 
-	public Integer getTotalNumberOfSeats(final Set<Integer> levelIds) throws Exception {
+	public Integer getTotalNumberOfSeats(final List<Integer> levelIds) throws Exception {
 		Validate.notNull(levelIds, "seatIds cannot be null.");
 		
 		Connection conn = null;
@@ -108,7 +108,7 @@ public class DAO {
 		return total;		
 	}
 	
-	public Integer getSeatsOnHoldOrReserveBySeatId(final Set<Integer> seatIds) throws Exception {
+	public Integer getSeatsOnHoldOrReserveBySeatId(final List<Integer> seatIds) throws Exception {
 		Validate.notNull(seatIds, "seatIds cannot be null.");
 		
 		Connection conn = null;
@@ -151,13 +151,13 @@ public class DAO {
 		return count;
 	}
 	
-	public Set<Integer> getLevelIds() throws Exception {
+	public List<Integer> getLevelIds() throws Exception {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
-		final Set<Integer> levelIds = new HashSet<>();
+		final List<Integer> levelIds = new ArrayList<>();
 		
-		final StringBuffer sql = new StringBuffer("SELECT id FROM level;");
+		final StringBuffer sql = new StringBuffer("SELECT id FROM level ORDER BY id ASC;");
 		try {
             conn = DBUtils.getConnection();
 			pstmt = conn.prepareStatement(sql.toString(), ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);

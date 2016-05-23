@@ -1,8 +1,8 @@
 package com.walmart;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.validator.routines.EmailValidator;
@@ -11,12 +11,12 @@ public class WalmartTicketService implements TicketService {
 	
 	public int numSeatsAvailable(Optional<Integer> venueLevel) throws Exception {
 		final DAO dao = new DAO();
-		Set<Integer> levelIds = dao.getLevelIds();
+		List<Integer> levelIds = dao.getLevelIds();
 
 		if (venueLevel.isPresent()) {
 			final Integer levelId = venueLevel.get();
 			Validate.isTrue(levelIds.contains(levelId), levelId + " is not supported.");
-			levelIds = Collections.singleton(levelId);
+			levelIds = Collections.singletonList(levelId);
 		}
 		
 		final Integer totalSeats = dao.getTotalNumberOfSeats(levelIds);
@@ -33,6 +33,12 @@ public class WalmartTicketService implements TicketService {
 
 		final DAO dao = new DAO();
 		final Integer customerId = dao.getCustomerIdByEmailAddress(customerEmail);
+		
+		if (!minLevel.isPresent() && !maxLevel.isPresent()) {
+			final List<Integer> levelIds = dao.getLevelIds();
+			
+		
+		}
 		
 		
 		// TODO Auto-generated method stub
