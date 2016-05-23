@@ -1,6 +1,5 @@
 DROP TABLE IF EXISTS `seat`;
-DROP TABLE IF EXISTS `seats_on_hold`;
-DROP TABLE IF EXISTS `seats_on_reserve`;
+DROP TABLE IF EXISTS `seat_status`;
 DROP TABLE IF EXISTS `customer`;
 DROP TABLE IF EXISTS `level`;
 
@@ -29,21 +28,11 @@ CREATE TABLE `customer` (
   PRIMARY KEY (`id`)
 );
 
-CREATE TABLE `seats_on_hold` ( 
+CREATE TABLE `seat_status` ( 
   `seat_id` int(4) NOT null,
   `customer_id` int(4) NOT null, 
-  PRIMARY KEY (`seat_id`, `customer_id`),
-  FOREIGN KEY (seat_id)
-      REFERENCES seat(id)
-      ON DELETE CASCADE,
-  FOREIGN KEY (customer_id)
-      REFERENCES customer(id)
-      ON DELETE CASCADE
-);
-
-CREATE TABLE `seat_on_reserve` ( 
-  `seat_id` int(4) NOT null,
-  `customer_id` int(4) NOT null, 
+  `hold` BOOLEAN NOT NULL DEFAULT 0,
+  `reserve` BOOLEAN NOT NULL DEFAULT 0,
   PRIMARY KEY (`seat_id`, `customer_id`),
   FOREIGN KEY (seat_id)
       REFERENCES seat(id)

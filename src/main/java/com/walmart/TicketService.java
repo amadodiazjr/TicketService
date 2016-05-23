@@ -9,7 +9,7 @@ public interface TicketService {
 	 * @param venueLevel a numeric venue level identifier to limit the search
 	 * @return the number of tickets available on the provided level
 	 */
-	int numSeatsAvailable(Optional<Integer> venueLevel);
+	int numSeatsAvailable(Optional<Integer> venueLevel) throws Exception ;
 	
 	/**
 	 * Find and hold the best available seats for a customer

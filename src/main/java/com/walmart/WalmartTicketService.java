@@ -1,15 +1,28 @@
 package com.walmart;
 
+import java.util.Collections;
 import java.util.Optional;
+import java.util.Set;
 
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.validator.routines.EmailValidator;
 
 public class WalmartTicketService implements TicketService {
 
-	public int numSeatsAvailable(Optional<Integer> venueLevel) {
-		// TODO Auto-generated method stub
-		return 0;
+	public int numSeatsAvailable(Optional<Integer> venueLevel) throws Exception {
+		final DAO dao = new DAO();
+		Set<Integer> levelIds = dao.getLevelIds();
+
+		if (venueLevel.isPresent()) {
+			final Integer levelId = venueLevel.get();
+			Validate.isTrue(levelIds.contains(levelId), levelId + " is not supported.");
+			levelIds = Collections.singleton(levelId);
+		}
+		
+		final Integer totalSeats = dao.getTotalNumberOfSeats(levelIds);
+		final Integer totalSeatsTaken = dao.getSeatsOnHoldOrReserveBySeatId(levelIds);
+
+		return totalSeats - totalSeatsTaken;
 	}
 
 	public SeatHold findAndHoldSeats(int numSeats, Optional<Integer> minLevel, Optional<Integer> maxLevel,

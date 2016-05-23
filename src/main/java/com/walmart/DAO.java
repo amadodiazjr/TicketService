@@ -3,6 +3,7 @@ package com.walmart;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.commons.lang.Validate;
@@ -36,18 +37,63 @@ public class DAO {
 		return emailAddress;
 	}
 
-	public Integer getSeatsOnHoldBySeatId(final Set<Integer> seatIds) throws Exception {
+	public Integer getTotalNumberOfSeats(final Set<Integer> levelIds) throws Exception {
+		Validate.notNull(levelIds, "seatIds cannot be null.");
+		
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		Integer total = 0;
+
+		final StringBuffer sql = new StringBuffer();
+		sql.append("SELECT rows, seats_per_row ");
+		sql.append("FROM level ");
+		sql.append("WHERE id IN (");
+		for (int i=0; i< levelIds.size(); i++) {
+			if (i>0) { sql.append(", "); }
+			sql.append("?");
+		}
+		sql.append(")");
+
+		try {
+            conn = DBUtils.getConnection();
+			pstmt = conn.prepareStatement(sql.toString(), ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+			int i=1;
+			for (final Integer seatId : levelIds) {
+				pstmt.setInt(i, seatId);
+				i++;
+			}
+
+			rs = pstmt.executeQuery();
+			while (rs.next()) {
+				final Integer rows = Integer.parseInt(rs.getString("rows"));
+				final Integer seats_per_row = Integer.parseInt(rs.getString("seats_per_row"));
+				total = total + (rows * seats_per_row);
+			}
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			DBUtils.safeClose(conn);
+			DBUtils.safeClose(pstmt);
+			DBUtils.safeClose(rs);
+		}
+		
+		return total;		
+	}
+	
+	public Integer getSeatsOnHoldOrReserveBySeatId(final Set<Integer> seatIds) throws Exception {
 		Validate.notNull(seatIds, "seatIds cannot be null.");
 		
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
-		Integer count = 0;
+		Integer count = null;
 
 		final StringBuffer sql = new StringBuffer();
 		sql.append("SELECT COUNT(*) as count ");
-		sql.append("FROM seats_on_hold ");
-		sql.append("WHERE seat_id IN (");
+		sql.append("FROM seat_status ");
+		sql.append("WHERE hold = 1 OR reserve = 1 ");
+		sql.append("AND seat_id IN (");
 		for (int i=0; i< seatIds.size(); i++) {
 			if (i>0) { sql.append(", "); }
 			sql.append("?");
@@ -77,4 +123,31 @@ public class DAO {
 		
 		return count;
 	}
+	
+	public Set<Integer> getLevelIds() throws Exception {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		final Set<Integer> levelIds = new HashSet<>();
+		
+		final StringBuffer sql = new StringBuffer("SELECT id FROM level;");
+		try {
+            conn = DBUtils.getConnection();
+			pstmt = conn.prepareStatement(sql.toString(), ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+			
+			rs = pstmt.executeQuery();
+			while (rs.next()) {
+				levelIds.add(Integer.parseInt(rs.getString("id")));
+			}
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			DBUtils.safeClose(conn);
+			DBUtils.safeClose(pstmt);
+			DBUtils.safeClose(rs);
+		}
+		
+		return levelIds;		
+	}
+
 }

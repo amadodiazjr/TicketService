@@ -1,32 +1,41 @@
 package integration;
 
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
 import java.util.Optional;
 
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.walmart.DBUtils;
 import com.walmart.TicketService;
 import com.walmart.WalmartTicketService;
 
 public class WalmartTicketServiceTest {
+
+	@BeforeClass
+	public static void doThisBeforeAllTests() throws Exception {
+		System.setProperty("dataSource", "conf/dev/mysql.properties");
+		DBUtils.start();
+	}
+
+	@AfterClass
+	public static void doThisAfterAllTests() throws Exception {
+		DBUtils.stop();	
+	}
 	
 	@Test
-	public void numSeatsAvailableShallReturnTotalNumberOfAllLevelsWhenLevelIsNotProvided() {
-		final TicketService service = new WalmartTicketService();
-		final int seatHoldId = 1;
-		final String customerEmail = "foo@bar.com";
-
+	public void numSeatsAvailableShallReturnTotalNumberOfAllLevelsWhenLevelIsNotProvided() throws Exception {
 		// ~given
-		
+		final TicketService service = new WalmartTicketService();		
 		
 		// ~when
-		final Integer num = service.numSeatsAvailable(Optional.of(1)); 
+		final Integer num = service.numSeatsAvailable(Optional.empty()); 
 
 		// ~then
-		assertThat(num, is(50));
+		assertThat(num, is(6250));
 	}
 	
 }

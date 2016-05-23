@@ -35,7 +35,7 @@ public class DAOTest {
 		final Integer seatId = 1;
 
 		// ~when
-		final Integer numSeats = dao.getSeatsOnHoldBySeatId(Collections.singleton(seatId));
+		final Integer numSeats = dao.getSeatsOnHoldOrReserveBySeatId(Collections.singleton(seatId));
 		
 		// ~then
 		assertThat(numSeats, is(0));
@@ -53,9 +53,23 @@ public class DAOTest {
 		seatIds.add(4);
 
 		// ~when
-		final Integer numSeats = dao.getSeatsOnHoldBySeatId(seatIds);
+		final Integer numSeats = dao.getSeatsOnHoldOrReserveBySeatId(seatIds);
 		
 		// ~then
 		assertThat(numSeats, is(0));		
+	}
+	
+	@Test
+	public void getLevelIdsShallReturnLevelIds() throws Exception {
+		final DAO dao = new DAO();
+		
+		// ~given
+		Set<Integer> levelIds = new HashSet<>();
+		
+		// ~when
+		levelIds = dao.getLevelIds();
+		
+		// ~then
+		assertThat(levelIds.isEmpty(), is(false));
 	}
 }
