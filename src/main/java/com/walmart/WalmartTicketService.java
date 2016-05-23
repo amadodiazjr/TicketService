@@ -8,7 +8,7 @@ import org.apache.commons.lang3.Validate;
 import org.apache.commons.validator.routines.EmailValidator;
 
 public class WalmartTicketService implements TicketService {
-
+	
 	public int numSeatsAvailable(Optional<Integer> venueLevel) throws Exception {
 		final DAO dao = new DAO();
 		Set<Integer> levelIds = dao.getLevelIds();
@@ -26,7 +26,15 @@ public class WalmartTicketService implements TicketService {
 	}
 
 	public SeatHold findAndHoldSeats(int numSeats, Optional<Integer> minLevel, Optional<Integer> maxLevel,
-			String customerEmail) {
+		String customerEmail) throws Exception {
+		Validate.isTrue(numSeats > 0, "numSeats cannot be less than zero.");
+		Validate.notBlank(customerEmail, "customerEmail is not provided.");
+		Validate.isTrue(EmailValidator.getInstance().isValid(customerEmail), customerEmail + " is not valid.");
+
+		final DAO dao = new DAO();
+		final Integer customerId = dao.getCustomerIdByEmailAddress(customerEmail);
+		
+		
 		// TODO Auto-generated method stub
 		return null;
 	}

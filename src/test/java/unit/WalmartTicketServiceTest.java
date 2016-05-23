@@ -4,6 +4,8 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
+import java.util.Optional;
+
 import org.junit.Test;
 
 import com.walmart.TicketService;
@@ -82,4 +84,50 @@ public class WalmartTicketServiceTest {
 		// ~then
 		assertThat(confirmationNumber, is(notNullValue()));
 	}
+	
+	@Test(expected = Exception.class)
+	public void findAndHoldSeatsShallThrowAnExceptionAnErrorWhenCustomerNumSeatsIsANegativeNumber() throws Exception {
+		final TicketService service = new WalmartTicketService();
+		final String customerEmail = "foo@bar.com";
+		
+		// ~given
+		final int numSeats = -1;
+
+		// ~when
+		service.findAndHoldSeats(numSeats, Optional.empty(), Optional.empty(), customerEmail); 
+		
+		// ~then
+		// exception is thrown
+	}
+
+	@Test(expected = Exception.class)
+	public void findAndHoldSeatsShallThrowAnExceptionAnErrorWhenCustomerEmailIsNotProvided() throws Exception {
+		final TicketService service = new WalmartTicketService();
+		final int numSeats = 1;
+
+		// ~given
+		final String customerEmail = null;
+		
+		// ~when
+		service.findAndHoldSeats(numSeats, Optional.empty(), Optional.empty(), customerEmail); 
+		
+		// ~then
+		// exception is thrown
+	}
+
+	@Test(expected = Exception.class)
+	public void findAndHoldSeatsShallThrowAnExceptionAnErrorWhenCustomerEmailIsNotValid() throws Exception {
+		final TicketService service = new WalmartTicketService();
+		final int numSeats = 1;
+
+		// ~given
+		final String customerEmail = "foobar";
+		
+		// ~when
+		service.findAndHoldSeats(numSeats, Optional.empty(), Optional.empty(), customerEmail); 
+		
+		// ~then
+		// exception is thrown
+	}
+
 }

@@ -20,7 +20,7 @@ public interface TicketService {
 	 * @param customerEmail unique identifier for the customer
 	 * @return a SeatHold object identifying the specific seats and related information
 	 */
-	SeatHold findAndHoldSeats(int numSeats, Optional<Integer> minLevel, Optional<Integer> maxLevel, String customerEmail);
+	SeatHold findAndHoldSeats(int numSeats, Optional<Integer> minLevel, Optional<Integer> maxLevel, String customerEmail) throws Exception;
 
 	/**
 	 * Commit seats held for a specific customer

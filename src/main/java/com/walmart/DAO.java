@@ -37,6 +37,33 @@ public class DAO {
 		return emailAddress;
 	}
 
+	public Integer getCustomerIdByEmailAddress(final String emailAddress) throws Exception {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		Integer customerId = null;
+
+		final StringBuffer sql = new StringBuffer("SELECT id FROM customer WHERE email = ?;");
+		try {
+            conn = DBUtils.getConnection();
+			pstmt = conn.prepareStatement(sql.toString(), ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+			pstmt.setString(1, emailAddress);
+			
+			rs = pstmt.executeQuery();
+			if (rs.next()) {
+				customerId = Integer.parseInt(rs.getString("id"));
+			}
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			DBUtils.safeClose(conn);
+			DBUtils.safeClose(pstmt);
+			DBUtils.safeClose(rs);
+		}
+		
+		return customerId;
+	}
+
 	public Integer getTotalNumberOfSeats(final Set<Integer> levelIds) throws Exception {
 		Validate.notNull(levelIds, "seatIds cannot be null.");
 		
