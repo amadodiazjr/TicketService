@@ -1,7 +1,9 @@
 package com.walmart;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -39,25 +41,30 @@ public class WalmartTicketService implements TicketService {
 
 	    final Comparator<Seat> bySeatNumber = (s1, s2) -> Integer.compare(s1.getNumber(), s2.getNumber());
 		final Set<Seat> seats = dao.getAllAvailableSeats();
+		final Set<Integer> seatIds = new HashSet<>();
 		if (!minLevel.isPresent() && !maxLevel.isPresent()) {
-			final Set<Integer> seatIds = seats.stream().map(s -> s.getId()).collect(Collectors.toSet());
-			final SeatHold seatHold = new SeatHold(customerId, seatIds);
-			dao.holdSeats(seatHold);
-
-			return seatHold;
+			seatIds.addAll(seats.stream().map(s -> s.getId()).collect(Collectors.toSet()));
 		} else {
-			final List<Seat> orchestraSeats = seats.stream().filter(s -> s.getLevelId().equals(1)).sorted(bySeatNumber).collect(Collectors.toList());
-			final List<Seat> mainSeats = seats.stream().filter(s -> s.getLevelId().equals(2)).sorted(bySeatNumber).collect(Collectors.toList());
-			final List<Seat> balconyOneSeats = seats.stream().filter(s -> s.getLevelId().equals(3)).sorted(bySeatNumber).collect(Collectors.toList());
-			final List<Seat> balconyTwoSeats = seats.stream().filter(s -> s.getLevelId().equals(4)).sorted(bySeatNumber).collect(Collectors.toList());
-
-			
-			final Set<Level> levels = dao.getAllLevels();
-			final Set<Integer> levelIds = levels.stream().map(l -> l.getId()).collect(Collectors.toSet());
-			
+			final List<Seat> heldSeats = new ArrayList<>();
+			if (minLevel.isPresent() && maxLevel.isPresent()) {
+				final Integer min = minLevel.get();
+				final Integer max = maxLevel.get();
+				for (int i=min; min <= max; i++) {
+					final Integer levelId = i;
+					heldSeats.addAll(seats.stream().filter(s -> s.getLevelId().equals(levelId)).sorted(bySeatNumber).collect(Collectors.toList()));
+				}
+			} else if (!minLevel.isPresent() && maxLevel.isPresent()) {
+				heldSeats.addAll(seats.stream().filter(s -> s.getLevelId().equals(maxLevel.get())).sorted(bySeatNumber).collect(Collectors.toList()));
+			} else if (minLevel.isPresent() && !maxLevel.isPresent()) {
+				heldSeats.addAll(seats.stream().filter(s -> s.getLevelId().equals(minLevel.get())).sorted(bySeatNumber).collect(Collectors.toList()));	
+			}
+			seatIds.addAll(heldSeats.stream().map(s -> s.getId()).collect(Collectors.toSet()));
 		}
 
-		return null;
+		final SeatHold seatHold = new SeatHold(customerId, seatIds);
+		dao.holdSeats(seatHold);
+
+		return seatHold;
 	}
 
 	public String reserveSeats(int seatHoldId, String customerEmail) {
