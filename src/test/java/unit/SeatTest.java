@@ -19,7 +19,7 @@ public class SeatTest {
 		final Integer id = null;
 
 		// ~when
-		new Seat(id, levelId, number);
+		new Seat(id, levelId, number, 1, 1);
 
 		// ~then
 		// an exception is thrown
@@ -34,7 +34,7 @@ public class SeatTest {
 		final Integer levelId = null;
 
 		// ~when
-		new Seat(id, levelId, number);
+		new Seat(id, levelId, number, 1, 1);
 
 		// ~then
 		// an exception is thrown
@@ -49,7 +49,7 @@ public class SeatTest {
 		final Integer number = null;
 
 		// ~when
-		new Seat(id, levelId, number);
+		new Seat(id, levelId, number, 1 , 1);
 
 		// ~then
 		// an exception is thrown
@@ -64,7 +64,7 @@ public class SeatTest {
 		final Integer id = -1;
 
 		// ~when
-		new Seat(id, levelId, number);
+		new Seat(id, levelId, number, 1, 1);
 
 		// ~then
 		// an exception is thrown
@@ -79,7 +79,7 @@ public class SeatTest {
 		final Integer levelId = -1;
 
 		// ~when
-		new Seat(id, levelId, number);
+		new Seat(id, levelId, number, 1, 1);
 
 		// ~then
 		// an exception is thrown
@@ -94,7 +94,7 @@ public class SeatTest {
 		final Integer number = -1;
 
 		// ~when
-		new Seat(id, levelId, number);
+		new Seat(id, levelId, number, 1, 1);
 
 		// ~then
 		// an exception is thrown
@@ -108,7 +108,7 @@ public class SeatTest {
 		final Integer number = 1;
 
 		// ~when
-		final Seat seat = new Seat(id, levelId, number);
+		final Seat seat = new Seat(id, levelId, number, 1, 1);
 
 		// ~then
 		assertThat(seat, is(notNullValue()));		

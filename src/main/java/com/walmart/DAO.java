@@ -4,7 +4,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.Validate;
 
@@ -64,6 +66,99 @@ public class DAO {
 		return customerId;
 	}
 
+	public Set<Seat> getAllAvailableSeats() throws Exception {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		final Set<Seat> seats = new HashSet<>();
+
+		final StringBuffer sql = new StringBuffer("SELECT id, status_id, level_id, number, customer_id FROM seat WHERE status_id = 0;");
+		try {
+            conn = DBUtils.getConnection();
+			pstmt = conn.prepareStatement(sql.toString(), ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+
+			rs = pstmt.executeQuery();
+			while (rs.next()) {
+				final Integer id = Integer.parseInt(rs.getString("id"));
+				final Integer levelId = Integer.parseInt(rs.getString("level_id"));
+				final Integer statusId = Integer.parseInt(rs.getString("status_id"));
+				final Integer customerId = Integer.parseInt(rs.getString("customerId"));
+				final Integer number = Integer.parseInt(rs.getString("number"));
+				seats.add(new Seat(id, levelId, number, statusId, customerId));
+			}
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			DBUtils.safeClose(conn);
+			DBUtils.safeClose(pstmt);
+			DBUtils.safeClose(rs);
+		}
+		
+		return seats;
+	}
+	
+	public Set<Level> getAllLevels() throws Exception {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		final Set<Level> levels = new HashSet<>();
+
+		final StringBuffer sql = new StringBuffer("SELECT id, name, price, rows, seats_per_row FROM level;");
+		try {
+            conn = DBUtils.getConnection();
+			pstmt = conn.prepareStatement(sql.toString(), ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+
+			rs = pstmt.executeQuery();
+			while (rs.next()) {
+				final Integer id = Integer.parseInt(rs.getString("id"));
+				final String name = rs.getString("name");
+				final Double price = Double.parseDouble(rs.getString("price"));
+				final Integer rows = Integer.parseInt(rs.getString("rows"));
+				final Integer seatsPerRow = Integer.parseInt(rs.getString("seats_per_row"));
+				levels.add(new Level(id, name, price, rows, seatsPerRow));
+			}
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			DBUtils.safeClose(conn);
+			DBUtils.safeClose(pstmt);
+			DBUtils.safeClose(rs);
+		}
+
+		return levels;		
+	}
+
+	public void holdSeats(final SeatHold seatHold) throws Exception {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+
+		final Set<Integer> seatIds = seatHold.getSeatIds();
+		final Integer customerId = seatHold.getCustomerId();
+		
+        Integer batchSize = 0;
+		final StringBuffer sql = new StringBuffer();
+		sql.append("UPDATE seat SET status_id=1, customer_id=? WHERE seat_id=?;");
+		try {
+			conn = DBUtils.getConnection();
+			pstmt = conn.prepareStatement(sql.toString());
+			for (final Integer seatId : seatIds) {
+				pstmt.setInt(1, customerId);
+				pstmt.setInt(2, seatId);
+				pstmt.addBatch();
+				batchSize++;		
+			}
+
+			if (batchSize > 0) {
+				pstmt.executeBatch();
+			}
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			DBUtils.safeClose(conn);
+			DBUtils.safeClose(pstmt);
+		}        
+	}
+
 	public Integer getTotalNumberOfSeats(final List<Integer> levelIds) throws Exception {
 		Validate.notNull(levelIds, "seatIds cannot be null.");
 		
@@ -118,9 +213,9 @@ public class DAO {
 
 		final StringBuffer sql = new StringBuffer();
 		sql.append("SELECT COUNT(*) as count ");
-		sql.append("FROM seat_status ");
-		sql.append("WHERE hold = 1 OR reserve = 1 ");
-		sql.append("AND seat_id IN (");
+		sql.append("FROM seat ");
+		sql.append("WHERE status_id <> 0 ");
+		sql.append("AND id IN (");
 		for (int i=0; i< seatIds.size(); i++) {
 			if (i>0) { sql.append(", "); }
 			sql.append("?");
