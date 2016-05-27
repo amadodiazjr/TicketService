@@ -10,16 +10,16 @@ Set up:
 
 Build:
 
-  gradle build
+1. gradle build
 
 Run App:
 
-  gradle run
+1. gradle run
 
 Run Tests with Code Coverage:
 
-  gradle test jacocoTestReport
+1. gradle test jacocoTestReport
 
 Open test results:
 
-  open build/reports/jacoco/test/html/index.html
+1. open build/reports/jacoco/test/html/index.html
