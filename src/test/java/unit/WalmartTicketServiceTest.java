@@ -26,7 +26,7 @@ public class WalmartTicketServiceTest {
 	}
 
 	@Test(expected = Exception.class)
-	public void reserveSeatsShallThrowAnExceptionWhenSeatHoldIdIsANegativeNumber() {
+	public void reserveSeatsShallThrowAnExceptionWhenSeatHoldIdIsANegativeNumber() throws Exception {
 		final TicketService service = new WalmartTicketService();
 		final String customerEmail = "foo@bar.com";
 		
@@ -41,7 +41,7 @@ public class WalmartTicketServiceTest {
 	}
 
 	@Test(expected = Exception.class)
-	public void reserveSeatsShallThrowAnExceptionAnErrorWhenCustomerEmailIsNotProvided() {
+	public void reserveSeatsShallThrowAnExceptionAnErrorWhenCustomerEmailIsNotProvided() throws Exception {
 		final TicketService service = new WalmartTicketService();
 		final int seatHoldId = 1;
 		
@@ -56,7 +56,7 @@ public class WalmartTicketServiceTest {
 	}
 
 	@Test(expected = Exception.class)
-	public void reserveSeatsShallThrowAnExceptionAnErrorWhenCustomerEmailIsNotValid() {
+	public void reserveSeatsShallThrowAnExceptionAnErrorWhenCustomerEmailIsNotValid() throws Exception {
 		final TicketService service = new WalmartTicketService();
 		final int seatHoldId = 1;
 
@@ -70,21 +70,6 @@ public class WalmartTicketServiceTest {
 		// exception is thrown
 	}
 
-	@Test
-	public void reserveSeatsShallReturnAStringWhenAllRequirementsAreMet() {
-		final TicketService service = new WalmartTicketService();
-
-		// ~given
-		final int seatHoldId = 1;
-		final String customerEmail = "foo@bar.com";
-
-		// ~when
-		final String confirmationNumber = service.reserveSeats(seatHoldId, customerEmail);
-		
-		// ~then
-		assertThat(confirmationNumber, is(notNullValue()));
-	}
-	
 	@Test(expected = Exception.class)
 	public void findAndHoldSeatsShallThrowAnExceptionAnErrorWhenCustomerNumSeatsIsANegativeNumber() throws Exception {
 		final TicketService service = new WalmartTicketService();

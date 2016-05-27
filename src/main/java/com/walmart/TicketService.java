@@ -2,6 +2,11 @@ package com.walmart;
 
 import java.util.Optional;
 
+/**
+ * I purposely changed the signature here to throw Exceptions.
+ * 
+ * @author amadia
+ */
 public interface TicketService {
 	/**
 	 * The number of seats in the requested level that are neither held nor reserved
@@ -30,5 +35,5 @@ public interface TicketService {
 	 is assigned
 	 * @return a reservation confirmation code
 	 */
-	String reserveSeats(int seatHoldId, String customerEmail);
+	String reserveSeats(int seatHoldId, String customerEmail) throws Exception;
 }

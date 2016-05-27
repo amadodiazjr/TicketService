@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -132,7 +133,7 @@ public class DAO {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 
-		final Set<Integer> seatIds = seatHold.getSeatIds();
+		final Collection<Integer> seatIds = seatHold.getSeatIds();
 		final Integer customerId = seatHold.getCustomerId();
 		
         Integer batchSize = 0;
@@ -156,7 +157,90 @@ public class DAO {
 		} finally {
 			DBUtils.safeClose(conn);
 			DBUtils.safeClose(pstmt);
+		}
+	}
+
+	public void reserveSeats(final Integer customerId, final Set<Integer> seatIds) throws Exception {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		
+        Integer batchSize = 0;
+		final StringBuffer sql = new StringBuffer();
+		sql.append("UPDATE seat SET status_id=2 WHERE seat_id=? AND customer_id=?;");
+		try {
+			conn = DBUtils.getConnection();
+			pstmt = conn.prepareStatement(sql.toString());
+			for (final Integer seatId : seatIds) {
+				pstmt.setInt(1, seatId);
+				pstmt.setInt(2, customerId);
+				pstmt.addBatch();
+				batchSize++;		
+			}
+
+			if (batchSize > 0) {
+				pstmt.executeBatch();
+			}
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			DBUtils.safeClose(conn);
+			DBUtils.safeClose(pstmt);
 		}        
+	}
+
+	public void addOrder(final Integer customerId, final String confirmation) throws Exception {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+
+		final StringBuffer sql = new StringBuffer();
+		sql.append("INSERT INTO order (customer_id,confirmation) VALUES (?,?);");
+		try {
+            conn = DBUtils.getConnection();
+			pstmt = conn.prepareStatement(sql.toString());
+			pstmt.setInt(1, customerId);
+            pstmt.setString(2, confirmation);
+
+			pstmt.execute();
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			DBUtils.safeClose(conn);
+			DBUtils.safeClose(pstmt);
+		}
+	}
+
+	public Set<Integer> getHeldSeatsByCustomerId(final Integer customerId) throws Exception {
+		Validate.notNull(customerId, "customerId cannot be null.");
+		
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		final Set<Integer> seatIds = new HashSet<>();
+
+		final StringBuffer sql = new StringBuffer();
+		sql.append("SELECT id ");
+		sql.append("FROM seat ");
+		sql.append("WHERE status_id = 1 AND customer_id = ?");
+
+		try {
+            conn = DBUtils.getConnection();
+			pstmt = conn.prepareStatement(sql.toString(), ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+			pstmt.setInt(1, customerId);
+
+			rs = pstmt.executeQuery();
+			while (rs.next()) {
+				final Integer seatId = Integer.parseInt(rs.getString("id"));
+				seatIds.add(seatId);
+			}
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			DBUtils.safeClose(conn);
+			DBUtils.safeClose(pstmt);
+			DBUtils.safeClose(rs);
+		}
+		
+		return seatIds;		
 	}
 
 	public Integer getTotalNumberOfSeats(final List<Integer> levelIds) throws Exception {

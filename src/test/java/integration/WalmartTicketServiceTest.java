@@ -49,5 +49,20 @@ public class WalmartTicketServiceTest {
 		// ~then
 		assertThat(num, is(1250));
 	}
+	
+	@Test(expected=Exception.class)
+	public void reserveSeatsShallThrowAnExceptionWhenZeroHeldSeatsAreFound() throws Exception {
+		final TicketService service = new WalmartTicketService();
+
+		// ~given
+		final int seatHoldId = 1;
+		final String customerEmail = "foo@bar.com";
+
+		// ~when
+		service.reserveSeats(seatHoldId, customerEmail);
+		
+		// ~then
+		// an exception is thrown
+	}
 
 }

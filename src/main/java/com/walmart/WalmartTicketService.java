@@ -3,7 +3,6 @@ package com.walmart;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -40,39 +39,54 @@ public class WalmartTicketService implements TicketService {
 		final Integer customerId = dao.getCustomerIdByEmailAddress(customerEmail);
 
 	    final Comparator<Seat> bySeatNumber = (s1, s2) -> Integer.compare(s1.getNumber(), s2.getNumber());
-		final Set<Seat> seats = dao.getAllAvailableSeats();
-		final Set<Integer> seatIds = new HashSet<>();
+		final Set<Seat> allSeats = dao.getAllAvailableSeats();
+		final List<Integer> availableSeatIds = new ArrayList<>();
 		if (!minLevel.isPresent() && !maxLevel.isPresent()) {
-			seatIds.addAll(seats.stream().map(s -> s.getId()).collect(Collectors.toSet()));
+			availableSeatIds.addAll(allSeats.stream().map(s -> s.getId()).collect(Collectors.toSet()));
 		} else {
-			final List<Seat> heldSeats = new ArrayList<>();
+			final List<Seat> availableSeats = new ArrayList<>();
 			if (minLevel.isPresent() && maxLevel.isPresent()) {
 				final Integer min = minLevel.get();
 				final Integer max = maxLevel.get();
 				for (int i=min; min <= max; i++) {
 					final Integer levelId = i;
-					heldSeats.addAll(seats.stream().filter(s -> s.getLevelId().equals(levelId)).sorted(bySeatNumber).collect(Collectors.toList()));
+					availableSeats.addAll(allSeats.stream().filter(s -> s.getLevelId().equals(levelId)).sorted(bySeatNumber).collect(Collectors.toList()));
 				}
 			} else if (!minLevel.isPresent() && maxLevel.isPresent()) {
-				heldSeats.addAll(seats.stream().filter(s -> s.getLevelId().equals(maxLevel.get())).sorted(bySeatNumber).collect(Collectors.toList()));
+				availableSeats.addAll(allSeats.stream().filter(s -> s.getLevelId().equals(maxLevel.get())).sorted(bySeatNumber).collect(Collectors.toList()));
 			} else if (minLevel.isPresent() && !maxLevel.isPresent()) {
-				heldSeats.addAll(seats.stream().filter(s -> s.getLevelId().equals(minLevel.get())).sorted(bySeatNumber).collect(Collectors.toList()));	
+				availableSeats.addAll(allSeats.stream().filter(s -> s.getLevelId().equals(minLevel.get())).sorted(bySeatNumber).collect(Collectors.toList()));	
 			}
-			seatIds.addAll(heldSeats.stream().map(s -> s.getId()).collect(Collectors.toSet()));
+			availableSeatIds.addAll(availableSeats.stream().map(s -> s.getId()).collect(Collectors.toSet()));
 		}
 
-		final SeatHold seatHold = new SeatHold(customerId, seatIds);
+		final List<Integer> heldSeats = new ArrayList<>();
+		for (int i=0; i<numSeats; i++) {
+			heldSeats.add(availableSeatIds.get(0));
+		}
+
+		final SeatHold seatHold = new SeatHold(customerId, heldSeats);
 		dao.holdSeats(seatHold);
 
 		return seatHold;
 	}
 
-	public String reserveSeats(int seatHoldId, String customerEmail) {
+	public String reserveSeats(int seatHoldId, String customerEmail) throws Exception {
 		Validate.isTrue(seatHoldId > 0, "seatHoldId cannot be a negative number.");
 		Validate.notBlank(customerEmail, "customerEmail is not provided.");
 		Validate.isTrue(EmailValidator.getInstance().isValid(customerEmail), customerEmail + " is not valid.");
+		
+		final DAO dao = new DAO();
+		final Integer customerId = dao.getCustomerIdByEmailAddress(customerEmail); // TODO (amado): could get rid of this transaction via SQL join
+		final Set<Integer> seatIds = dao.getHeldSeatsByCustomerId(customerId);
+		Validate.isTrue(!seatIds.isEmpty(), "customer has no held seats.");
 
-		return ConfirmationNumberGenerator.getInstance().generate().toString();
+		dao.reserveSeats(customerId, seatIds);
+
+		final String confirmationNumber = ConfirmationNumberGenerator.getInstance().generate().toString(); 
+		dao.addOrder(customerId, confirmationNumber);
+		
+		return confirmationNumber;
 	}
 
 }

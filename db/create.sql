@@ -41,3 +41,13 @@ CREATE TABLE `customer` (
   `email` varchar(100) NOT null,
   PRIMARY KEY (`id`)
 );
+
+CREATE TABLE `order` (
+  `id` int(4) NOT null AUTO_INCREMENT,
+  `customer_id` int(4) NOT null, 
+  `confirmation` varchar(100) NOT null,
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (customer_id)
+      REFERENCES customer(id)
+      ON DELETE CASCADE
+);

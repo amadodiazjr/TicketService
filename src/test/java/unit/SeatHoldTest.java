@@ -18,7 +18,7 @@ public class SeatHoldTest {
 		SeatHold seatHold = null;
 		
 		// ~when
-		seatHold = new SeatHold(1, Collections.emptySet());
+		seatHold = new SeatHold(1, Collections.emptyList());
 		
 		// ~then
 		assertThat(seatHold, is(notNullValue()));

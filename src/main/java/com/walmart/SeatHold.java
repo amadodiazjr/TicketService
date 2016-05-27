@@ -1,12 +1,12 @@
 package com.walmart;
 
-import java.util.Set;
+import java.util.List;
 
 public class SeatHold {
 	final Integer customerId;
-	final Set<Integer> seatIds;
+	final List<Integer> seatIds;
 	
-	public SeatHold(final Integer customerId, final Set<Integer> seatIds) {
+	public SeatHold(final Integer customerId, final List<Integer> seatIds) {
 		this.customerId = customerId;
 		this.seatIds = seatIds;
 	}
@@ -15,7 +15,7 @@ public class SeatHold {
 		return this.customerId;
 	}
 	
-	public Set<Integer> getSeatIds() {
+	public List<Integer> getSeatIds() {
 		return this.seatIds;
 	}
 }
