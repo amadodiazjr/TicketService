@@ -11,6 +11,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.walmart.DAO;
 import com.walmart.DBUtils;
 import com.walmart.SeatHold;
 import com.walmart.TicketService;
@@ -31,7 +32,7 @@ public class WalmartTicketServiceTest {
 	
 	@Before
 	public void doThisBeforeEachTest() throws Exception {
-		final TestDAO dao = new TestDAO();
+		final DAO dao = new DAO();
 		dao.resetDatabase();
 	}
 	
@@ -88,33 +89,6 @@ public class WalmartTicketServiceTest {
 		// ~then
 		assertThat(seatHold, is(notNullValue()));
 		assertThat(seatHold.getSeatIds().size(), is(numSeats));
-	}
-	
-	@Test
-	public void testWalmartAssignment() throws Exception {
-		final TicketService service = new WalmartTicketService();
-		final Integer TOTAL_SEATS = 6250;
-
-		// 1. GET ALL AVAILABLE SEATS
-		Integer numSeatsAvailable = service.numSeatsAvailable(Optional.empty());
-		assertThat(numSeatsAvailable, is(TOTAL_SEATS));
-				
-		final Integer numSeats = 1;
-		final String customerEmail = "foo@bar.com";
-
-		// 2. FIND AND HOLD SEATS
-		final SeatHold seatHold = service.findAndHoldSeats(numSeats, Optional.empty(), Optional.empty(), customerEmail);
-
-		assertThat(seatHold, is(notNullValue()));
-		assertThat(seatHold.getSeatIds().size(), is(numSeats));
-
-		// 3. VERIFY THAT SEATS ARE HELD
-		numSeatsAvailable = service.numSeatsAvailable(Optional.empty());
-		assertThat(numSeatsAvailable, is(TOTAL_SEATS-numSeats));
-
-		// 4. RESERVE SEATS
-		final String confirmationNumber = service.reserveSeats(seatHold.getHoldId(), customerEmail);
-		assertThat(confirmationNumber, is(notNullValue()));
 	}
 
 }

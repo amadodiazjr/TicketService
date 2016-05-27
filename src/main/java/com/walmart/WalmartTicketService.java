@@ -29,6 +29,9 @@ public class WalmartTicketService implements TicketService {
 		return totalSeats - totalSeatsTaken;
 	}
 
+	/**
+	 * Assuming that the lower the seat number, the better the view.  So best seats are allocated first.
+	 */
 	public SeatHold findAndHoldSeats(int numSeats, Optional<Integer> minLevel, Optional<Integer> maxLevel,
 		String customerEmail) throws Exception {
 		Validate.isTrue(numSeats > 0, "numSeats cannot be less than zero.");

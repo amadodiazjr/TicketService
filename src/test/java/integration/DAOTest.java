@@ -30,7 +30,7 @@ public class DAOTest {
 	
 	@Before
 	public void doThisBeforeEachTest() throws Exception {
-		final TestDAO dao = new TestDAO();
+		final DAO dao = new DAO();
 		dao.resetDatabase();
 	}
 

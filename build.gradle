@@ -2,10 +2,13 @@ plugins {
   id 'java'
   id 'eclipse'
   id 'jacoco'
+  id 'application'
 }
 
 sourceCompatibility = 1.8
 version = '1.0'
+
+mainClassName = 'com.walmart.App'
 
 jar {
     manifest {
