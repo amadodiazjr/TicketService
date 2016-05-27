@@ -1,10 +1,7 @@
 package unit;
 
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertThat;
-
 import java.util.Collections;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -12,15 +9,15 @@ import com.walmart.SeatHold;
 
 public class SeatHoldTest {
 
-	@Test
-	public void constructorShallCreateASeatHoldObject() {
+	@Test(expected=Exception.class)
+	public void constructorShallThrowAnExceptionWhenSeatIdsAreEmptyCreateASeatHoldObject() {
 		// ~given
-		SeatHold seatHold = null;
+		final List<Integer> seatIds = Collections.emptyList(); 
 		
 		// ~when
-		seatHold = new SeatHold(1, Collections.emptyList());
+		new SeatHold(1, seatIds);
 		
 		// ~then
-		assertThat(seatHold, is(notNullValue()));
+		// an exception is thrown;
 	}
 }

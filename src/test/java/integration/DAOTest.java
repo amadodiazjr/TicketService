@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -27,6 +28,12 @@ public class DAOTest {
 		DBUtils.stop();	
 	}
 	
+	@Before
+	public void doThisBeforeEachTest() throws Exception {
+		final TestDAO dao = new TestDAO();
+		dao.resetDatabase();
+	}
+
 	@Test
 	public void getSeatsOnHoldBySeatIdShallReturnSeatsOnHoldBySeatId() throws Exception {
 		final DAO dao = new DAO();

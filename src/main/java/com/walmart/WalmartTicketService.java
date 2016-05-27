@@ -67,6 +67,10 @@ public class WalmartTicketService implements TicketService {
 
 		final SeatHold seatHold = new SeatHold(customerId, heldSeats);
 		dao.holdSeats(seatHold);
+		dao.addOrder(customerId);
+		
+		final Integer seatHoldId = dao.getOrderIdByCustomerId(customerId);
+		seatHold.setHoldId(seatHoldId);
 
 		return seatHold;
 	}
@@ -84,8 +88,8 @@ public class WalmartTicketService implements TicketService {
 		dao.reserveSeats(customerId, seatIds);
 
 		final String confirmationNumber = ConfirmationNumberGenerator.getInstance().generate().toString(); 
-		dao.addOrder(customerId, confirmationNumber);
-		
+		dao.updateOrder(seatHoldId, confirmationNumber);
+
 		return confirmationNumber;
 	}
 

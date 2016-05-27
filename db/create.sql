@@ -2,6 +2,7 @@ DROP TABLE IF EXISTS `level`;
 DROP TABLE IF EXISTS `seat`;
 DROP TABLE IF EXISTS `status`;
 DROP TABLE IF EXISTS `customer`;
+DROP TABLE IF EXISTS `orders`;
 
 CREATE TABLE `level` (
   `id` int(4) NOT null AUTO_INCREMENT,
@@ -42,10 +43,10 @@ CREATE TABLE `customer` (
   PRIMARY KEY (`id`)
 );
 
-CREATE TABLE `order` (
+CREATE TABLE `orders` (
   `id` int(4) NOT null AUTO_INCREMENT,
   `customer_id` int(4) NOT null, 
-  `confirmation` varchar(100) NOT null,
+  `confirmation` varchar(100),
   PRIMARY KEY (`id`),
   FOREIGN KEY (customer_id)
       REFERENCES customer(id)

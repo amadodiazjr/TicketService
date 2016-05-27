@@ -83,7 +83,8 @@ public class DAO {
 				final Integer id = Integer.parseInt(rs.getString("id"));
 				final Integer levelId = Integer.parseInt(rs.getString("level_id"));
 				final Integer statusId = Integer.parseInt(rs.getString("status_id"));
-				final Integer customerId = Integer.parseInt(rs.getString("customerId"));
+				final Integer customerId = null != rs.getString("customer_id")
+					? Integer.parseInt(rs.getString("customer_id")) : null;
 				final Integer number = Integer.parseInt(rs.getString("number"));
 				seats.add(new Seat(id, levelId, number, statusId, customerId));
 			}
@@ -138,11 +139,11 @@ public class DAO {
 		
         Integer batchSize = 0;
 		final StringBuffer sql = new StringBuffer();
-		sql.append("UPDATE seat SET status_id=1, customer_id=? WHERE seat_id=?;");
+		sql.append("UPDATE seat SET status_id=1, customer_id=? WHERE id=?;");
 		try {
 			conn = DBUtils.getConnection();
 			pstmt = conn.prepareStatement(sql.toString());
-			for (final Integer seatId : seatIds) {
+			for (final Integer seatId : seatIds) {				
 				pstmt.setInt(1, customerId);
 				pstmt.setInt(2, seatId);
 				pstmt.addBatch();
@@ -166,7 +167,7 @@ public class DAO {
 		
         Integer batchSize = 0;
 		final StringBuffer sql = new StringBuffer();
-		sql.append("UPDATE seat SET status_id=2 WHERE seat_id=? AND customer_id=?;");
+		sql.append("UPDATE seat SET status_id=2 WHERE id=? AND customer_id=?;");
 		try {
 			conn = DBUtils.getConnection();
 			pstmt = conn.prepareStatement(sql.toString());
@@ -188,17 +189,17 @@ public class DAO {
 		}        
 	}
 
-	public void addOrder(final Integer customerId, final String confirmation) throws Exception {
+	public void updateOrder(final Integer holdId, final String confirmation) throws Exception {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 
 		final StringBuffer sql = new StringBuffer();
-		sql.append("INSERT INTO order (customer_id,confirmation) VALUES (?,?);");
+		sql.append("UPDATE orders SET confirmation=? WHERE id=?;");
 		try {
             conn = DBUtils.getConnection();
 			pstmt = conn.prepareStatement(sql.toString());
-			pstmt.setInt(1, customerId);
-            pstmt.setString(2, confirmation);
+			pstmt.setString(1, confirmation);
+            pstmt.setInt(2, holdId);
 
 			pstmt.execute();
 		} catch (Exception e) {
@@ -207,6 +208,59 @@ public class DAO {
 			DBUtils.safeClose(conn);
 			DBUtils.safeClose(pstmt);
 		}
+	}
+
+	public void addOrder(final Integer customerId) throws Exception {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+
+		final StringBuffer sql = new StringBuffer();
+		sql.append("INSERT INTO orders (customer_id) VALUES (?);");
+		try {
+            conn = DBUtils.getConnection();
+			pstmt = conn.prepareStatement(sql.toString());
+			pstmt.setInt(1, customerId);
+
+			pstmt.execute();
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			DBUtils.safeClose(conn);
+			DBUtils.safeClose(pstmt);
+		}
+	}
+
+	public Integer getOrderIdByCustomerId(final Integer customerId) throws Exception {
+		Validate.notNull(customerId, "customerId cannot be null.");
+		
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+
+		final StringBuffer sql = new StringBuffer();
+		sql.append("SELECT id ");
+		sql.append("FROM orders ");
+		sql.append("WHERE customer_id = ?");
+
+		Integer orderId = null;
+		try {
+            conn = DBUtils.getConnection();
+			pstmt = conn.prepareStatement(sql.toString(), ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+			pstmt.setInt(1, customerId);
+
+			rs = pstmt.executeQuery();
+			if (rs.next()) {
+				orderId = Integer.parseInt(rs.getString("id"));
+			}
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			DBUtils.safeClose(conn);
+			DBUtils.safeClose(pstmt);
+			DBUtils.safeClose(rs);
+		}
+		
+		return orderId;		
 	}
 
 	public Set<Integer> getHeldSeatsByCustomerId(final Integer customerId) throws Exception {

@@ -12,14 +12,14 @@ public class ConfirmationNumberTest {
 
 	@Test(expected=Exception.class)
 	public void constructorShallThrowAnExceptionWhenPrefixIsNotProvided() {
-		final Integer number = 1;
+		final String code = "1";
 		final String postfix = "bar";
 		
 		// ~given
 		final String prefix = null;
 		
 		// ~when
-		new ConfirmationNumber(prefix, number, postfix);
+		new ConfirmationNumber(prefix, code, postfix);
 		
 		// ~then
 		// exception is thrown
@@ -31,10 +31,10 @@ public class ConfirmationNumberTest {
 		final String postfix = "bar";
 
 		// ~given
-		final Integer number = null;
+		final String code = null;
 		
 		// ~when
-		new ConfirmationNumber(prefix, number, postfix);
+		new ConfirmationNumber(prefix, code, postfix);
 		
 		// ~then
 		// exception is thrown
@@ -43,13 +43,13 @@ public class ConfirmationNumberTest {
 	@Test(expected=Exception.class)
 	public void constructorShallThrowAnExceptionWhenPostfixIsNotProvided() {
 		final String prefix = "foo";
-		final Integer number = 1;
+		final String code = "1";
 
 		// ~given
 		final String postfix = null;
 		
 		// ~when
-		new ConfirmationNumber(prefix, number, postfix);
+		new ConfirmationNumber(prefix, code, postfix);
 		
 		// ~then
 		// exception is thrown
@@ -59,11 +59,11 @@ public class ConfirmationNumberTest {
 	public void constructorShallCreateAConfirmationNumberObjectWhenAllRequirementsAreMet() {		
 		// ~given
 		final String prefix = "foo";
-		final Integer number = 1;
+		final String code = "1";
 		final String postfix = "bar";
 		
 		// ~when
-		final ConfirmationNumber confirmationNumber = new ConfirmationNumber(prefix, number, postfix);
+		final ConfirmationNumber confirmationNumber = new ConfirmationNumber(prefix, code, postfix);
 		
 		// ~then
 		assertThat(confirmationNumber, is(notNullValue()));
@@ -72,11 +72,11 @@ public class ConfirmationNumberTest {
 	@Test
 	public void toStringShallReturnAString() {		
 		final String prefix = "foo";
-		final Integer number = 1;
+		final String code = "1";
 		final String postfix = "bar";
 
 		// ~given
-		final ConfirmationNumber confirmationNumber = new ConfirmationNumber(prefix, number, postfix);
+		final ConfirmationNumber confirmationNumber = new ConfirmationNumber(prefix, code, postfix);
 		
 		// ~when
 		final String string = confirmationNumber.toString();

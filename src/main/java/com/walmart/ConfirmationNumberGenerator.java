@@ -1,5 +1,7 @@
 package com.walmart;
 
+import java.util.UUID;
+
 public class ConfirmationNumberGenerator {
 	private static ConfirmationNumberGenerator INSTANCE = new ConfirmationNumberGenerator();
 
@@ -10,6 +12,6 @@ public class ConfirmationNumberGenerator {
 	}
 
 	public ConfirmationNumber generate() {
-		return new ConfirmationNumber("foo", 1, "bar");
+		return new ConfirmationNumber("foo", UUID.randomUUID().toString(), "bar");
 	}
 }
